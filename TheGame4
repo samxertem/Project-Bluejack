@@ -1,0 +1,402 @@
+import java.util.Arrays;
+import java.util.Random;
+import java.util.Scanner;
+public class TheGamePilot{
+public static void main(String[] args) {
+        Random rd = new Random();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Welcome to the Bluejack Game!");
+        System.out.println("|--------------------------------|");
+        TheGame game = new TheGame();
+
+        Card[] cards = new Card[40];
+
+        // Add blue cards
+        for (int i = 1; i <= 10; i++) {
+            cards[i - 1] = new Card(String.valueOf(i), "Blue");
+        }
+
+        // Add yellow cards
+        for (int i = 1; i <= 10; i++) {
+            cards[i + 9] = new Card(String.valueOf(i), "Yellow");
+        }
+
+        // Add red cards
+        for (int i = 1; i <= 10; i++) {
+            cards[i + 19] = new Card(String.valueOf(i), "Red");
+        }
+
+        // Add green cards
+        for (int i = 1; i <= 10; i++) {
+            cards[i + 29] = new Card(String.valueOf(i), "Green");
+        }
+
+        System.out.println("");
+
+        TheGame.shuffle(cards, rd);
+
+
+        // Dealing cards to computer and player
+        Card[] computerHandTest = new Card[10];
+        Card[] playerHandTest = new Card[10];
+
+        for (int j = 0; j < 5; j++) {
+            computerHandTest[j] = cards[j];
+            playerHandTest[j] = cards[35 + j];
+        }
+        Card[] gameDeck= new Card[30];
+        for(int i=0; i<gameDeck.length;i++){
+            gameDeck[i]=cards[i+5];
+        }
+       
+
+
+        int[] cardsWithSignsForComputer = new int[3];
+        String[] colorsWithSignsForComputer = new String[3];
+
+        for (int k = 0; k < cardsWithSignsForComputer.length; k++) {
+            cardsWithSignsForComputer[k] = rd.nextInt(6) + 1;
+            colorsWithSignsForComputer[k] = TheGame.getRandomColor();
+
+            int sign = rd.nextInt(100);
+            if (sign > 49) {
+                cardsWithSignsForComputer[k] = -cardsWithSignsForComputer[k];
+            }
+        }
+
+        int[] cardsWithSignsForPlayer = new int[3];
+        String[] colorsWithSignsForPlayer = new String[3];
+
+        for (int k = 0; k < cardsWithSignsForPlayer.length; k++) {
+            cardsWithSignsForPlayer[k] = rd.nextInt(6) + 1;
+            colorsWithSignsForPlayer[k] = TheGame.getRandomColor();
+
+            int sign = rd.nextInt(100);
+            if (sign > 49) {
+                cardsWithSignsForPlayer[k] = -cardsWithSignsForPlayer[k];
+            }
+        }
+
+        String[] specialCardsForPlayer = new String[2];
+        String[] specialCardsForComputer = new String[2];
+        String db = "Doubler";
+
+        int randomValue = 0;
+
+        int chance = rd.nextInt(5);
+        if (chance == 4) {
+            specialCardsForComputer[0] = "+/-";
+        } else {
+            randomValue = rd.nextInt(6) + 1;
+            specialCardsForComputer[0] = TheGame.getRandomColor() + " " + String.valueOf(randomValue);
+        }
+
+        // For special card 2 for computer
+        int chance2 = rd.nextInt(5);
+        if (chance2 == 4) {
+            specialCardsForComputer[1] = db;
+        } else {
+            randomValue = rd.nextInt(6) + 1;
+            specialCardsForComputer[1] = TheGame.getRandomColor() + " " + String.valueOf(randomValue);
+        }
+
+        // For special card 1 for player
+        int chance3 = rd.nextInt(5);
+        if (chance3 == 4) {
+            specialCardsForPlayer[0] = "+/-";
+        } else {
+            randomValue = rd.nextInt(6) + 1;
+            specialCardsForPlayer[0] = TheGame.getRandomColor() + " " + String.valueOf(randomValue);
+        }
+
+        // For special card 2 for player
+        int chance4 = rd.nextInt(5);
+        if (chance4 == 4) {
+            specialCardsForPlayer[1] = db;
+        } else {
+            randomValue = rd.nextInt(6) + 1;
+            specialCardsForPlayer[1] = TheGame.getRandomColor() + " " + String.valueOf(randomValue);
+        }
+
+        for (int i = 0; i < cardsWithSignsForPlayer.length; i++) {
+            playerHandTest[i + 5] = new Card(String.valueOf(cardsWithSignsForPlayer[i]), colorsWithSignsForPlayer[i]);
+        }
+
+        for (int i = 0; i < specialCardsForPlayer.length; i++) {
+            playerHandTest[i + 8] = new Card(specialCardsForPlayer[i], "");
+        }
+
+        for (int i = 0; i < cardsWithSignsForComputer.length; i++) {
+            computerHandTest[i + 5] = new Card(String.valueOf(cardsWithSignsForComputer[i]), colorsWithSignsForComputer[i]);
+        }
+
+        for (int i = 0; i < specialCardsForComputer.length; i++) {
+            computerHandTest[i + 8] = new Card(specialCardsForComputer[i], "");
+        }
+
+        
+        Card[] playerHand = new Card[4];
+        Card[] computerHand = new Card[4];
+        int cardSelector = 0;
+        int cardSelector2 = 0;
+        int[] controller = new int[10];
+        for (int i = 0; i < computerHand.length; i++) {
+            do {
+                cardSelector = rd.nextInt(10);
+            } while (controller[cardSelector] != 0);
+
+            controller[cardSelector] = 1;
+            computerHand[i] = computerHandTest[cardSelector];
+
+            do {
+                cardSelector2 = rd.nextInt(10);
+            } while (controller[cardSelector2] != 0);
+
+            controller[cardSelector2] = 1;
+            playerHand[i] = playerHandTest[cardSelector2];
+        }
+
+        System.out.println("PLAYERHAND: " + Arrays.toString(playerHand));
+        System.out.println("PLAYERBOARD: ");
+        System.out.println("");
+        System.out.println("COMPUTERHAND: X X X X ");
+        System.out.println("COMPUTERBOARD: ");
+
+
+
+
+        int computerBoardCard = 0;
+        int playerBoardCard = 0; 
+        Card[] playerBoard = new Card[9];
+        Card[] computerBoard = new Card[9];
+        int sumComputerBoard= 0;
+        int sumPlayerBoard = 0;
+        int playerSelect = 0;
+        int computerscore=0;
+        int playerscore=0;
+        boolean playersturn = true;
+        boolean computersturn = true;
+        int gameDeckIndex=0;
+        boolean isGameFinished = false;
+		int rc=1;
+		
+		
+        while(!isGameFinished){
+			sumComputerBoard= 0;
+			sumPlayerBoard = 0;
+			playerBoard = new Card[9];
+			computerBoard = new Card[9];
+			 computerBoardCard = 0;
+			 playerBoardCard = 0;
+            boolean isRoundFinished = false;
+			System.out.println(" Round: "+ rc);
+			rc++;
+                while (!isRoundFinished	) 
+            {
+                boolean hasPlayerDrawed = false;
+                while(playersturn){
+                    System.out.println("--------------------------------");
+                    System.out.println("Select your move!");
+                    if(!hasPlayerDrawed)
+                    {
+                        System.out.println("1. Draw   2. Stand 3. Choose From Your Deck 4. End Turn");
+                    }
+                    else {
+                        System.out.println("2. Stand 3. Choose From Your Deck 4. End Turn");
+                    }
+
+                    playerSelect = sc.nextInt();
+
+                    if (playerSelect == 1 && playerBoardCard < 9 && !hasPlayerDrawed ) {
+
+                        playerBoard[playerBoardCard]=gameDeck[gameDeckIndex];
+                        gameDeckIndex++;
+                        playerBoardCard++;
+                        hasPlayerDrawed = true;
+
+                        System.out.println("PLAYERHAND: " + Arrays.toString(playerHand));
+                        System.out.println("PLAYERBOARD: " + Arrays.toString(Arrays.copyOf(playerBoard, playerBoardCard)));
+                        System.out.println("COMPUTERBOARD: " + Arrays.toString(Arrays.copyOf(computerBoard, computerBoardCard)));
+                        System.out.println("COMPUTERHAND: X X X X ");
+
+                    }
+                    else if(playerSelect == 2)
+                    {
+                        playersturn = false;
+                        break;
+						
+                    }
+					
+                    else if(playerSelect==3 && playerBoardCard<9){
+                        System.out.println("Choose which card you want to play from your deck");
+                        System.out.println("PLAYERHAND: " + Arrays.toString(playerHand));
+                        int chooserfromdeck = sc.nextInt();
+
+                        if (playerHand[chooserfromdeck - 1].getValue().equals("Doubler")) {
+                            playerBoard[playerBoardCard] = playerHand[chooserfromdeck - 1];
+                            playerBoardCard++;
+
+                            if (playerBoardCard > 1 && playerBoard[playerBoardCard - 2] != null) {
+                                int previousValue = Integer.parseInt(playerBoard[playerBoardCard - 2].getValue());
+                                int newValue = 2 * previousValue;
+                                playerBoard[playerBoardCard - 1] = new Card(String.valueOf(newValue), playerBoard[playerBoardCard - 2].getColor());
+                                break;
+                            }
+
+                        } else if (playerHand[chooserfromdeck - 1].getValue().equals("+/-")) {
+                            playerBoard[playerBoardCard] = playerHand[chooserfromdeck - 1];
+                            playerBoardCard++;
+                            if (playerBoardCard > 1 && playerBoard[playerBoardCard - 2] != null) {
+                                int previousValue2 = Integer.parseInt(playerBoard[playerBoardCard - 2].getValue());
+                                int newValue2 = previousValue2 * -1;
+                                playerBoard[playerBoardCard - 1] = new Card(String.valueOf(newValue2), playerBoard[playerBoardCard - 2].getColor());
+                                break;
+                            }
+
+                        } else if (chooserfromdeck >= 1 && chooserfromdeck <= 4) {
+                            playerBoard[playerBoardCard] = playerHand[chooserfromdeck - 1];
+                            playerBoardCard++;
+                            break;
+                        } else {
+                            System.out.println("Invalid choice. Please choose a number between 1 and 4.");
+                            playersturn = true;
+                            continue;
+                        }
+
+                        System.out.println("PLAYERHAND: " + Arrays.toString(playerHand));
+                        System.out.println("PLAYERBOARD: " + Arrays.toString(Arrays.copyOf(playerBoard, playerBoardCard)));
+                        System.out.println("COMPUTERBOARD: " + Arrays.toString(Arrays.copyOf(computerBoard, computerBoardCard)));
+                        System.out.println("COMPUTERHAND: X X X X ");
+
+                    }else if(playerSelect==4){
+                        break;
+                    }
+                }
+
+                boolean hasComputerDrawedCard = false;
+                while (computersturn)
+                {
+                    boolean hasComputerPlayedCard = false;
+                    if(sumComputerBoard >= 15)
+                    {
+                        computersturn = false;
+                        break;
+                    }
+                    else if(sumComputerBoard > 20)
+                    {
+                        for(int i = 0; i < computerHand.length; i++)
+                        {
+                            if( Integer.parseInt(computerHand[i].getValue()) < 0 || computerHand[i].getValue().equals("+/-"))
+                            {
+                                computerBoard[computerBoardCard] = computerHand[i];
+                                computerBoardCard++;
+                                hasComputerPlayedCard = true;
+                                break;
+                            }
+                        }
+                        if(hasComputerPlayedCard == true){
+                            break;
+                        }
+                    }
+                    else if(sumComputerBoard <= 15 && !hasComputerDrawedCard)
+                    {
+                        computerBoard[computerBoardCard] = gameDeck[gameDeckIndex];
+                        gameDeckIndex++;
+                        computerBoardCard++;
+                        sumComputerBoard = TheGame.sumCardValues(computerBoard);
+                        hasComputerDrawedCard = true;
+                    }
+                    else if(hasComputerDrawedCard){
+                        break;
+                    }
+                }
+
+                System.out.println("PLAYERHAND: " + Arrays.toString(playerHand));
+                System.out.println("PLAYERBOARD: " + Arrays.toString(Arrays.copyOf(playerBoard, playerBoardCard)));
+                System.out.println("COMPUTERBOARD: " + Arrays.toString(Arrays.copyOf(computerBoard, computerBoardCard)));
+                System.out.println("COMPUTERHAND: X X X X ");
+
+                sumPlayerBoard = TheGame.sumCardValues(playerBoard);
+                sumComputerBoard= TheGame.sumCardValues(computerBoard);
+                if(sumPlayerBoard > 20)
+                {System.out.println(" Computer Wins the Round !");
+                    computerscore++;
+                    isRoundFinished = true;
+                    if(computerscore == 3)
+                    {
+                        isGameFinished =true;
+                    }
+                }
+                else if(sumComputerBoard > 20)
+                {System.out.println(" Player Wins the Round !");
+                    playerscore++;
+                    isRoundFinished = true;
+                    if(playerscore == 3)
+                    {
+                        isGameFinished = true;
+                    }
+                }
+
+                else if((sumPlayerBoard < 20 && sumComputerBoard < 20) && (!playersturn && !computersturn))
+                {System.out.println(" Player Wins the Round !");
+                    if(sumPlayerBoard > sumComputerBoard)
+                    {
+                        playerscore++;
+                        isRoundFinished = true;
+                        if(playerscore == 3)
+                        {
+                            isGameFinished = true;
+                        }
+                    }
+                    else if(sumComputerBoard > sumPlayerBoard)
+                    {System.out.println(" Computer Wins the Round ! ");
+                        computerscore++;
+                        isRoundFinished = true;
+                        if(computerscore == 3)
+                        {
+                            isGameFinished =true;
+                        }
+                    }
+                    else if(sumComputerBoard == sumPlayerBoard)
+                    {System.out.println(" It's Tie !" );
+                        isRoundFinished = true;
+                    }
+                }
+
+                else if(playerBoardCard == 9 && sumPlayerBoard <= 20)
+                {System.out.println(" Player Wins the Round ");
+                    playerscore++;
+                    isRoundFinished = true;
+                    if(playerscore == 3)
+                    {
+                        isGameFinished = true;
+                    }
+                }
+                else if(computerBoardCard == 9 && sumComputerBoard <= 20)
+                {System.out.println(" Computer Wins the Round ");
+                    computerscore++;
+                    isRoundFinished = true;
+                    if(computerscore == 3)
+                    {
+                        isGameFinished =true;
+                    }
+                }else {
+						for (int i = 0; i < computerBoard.length; i++) {
+						if (computerBoard[i] !=null && computerBoard[i].getColor().equals("Blue") && sumComputerBoard == 20) {
+									System.out.println("Computer Bluejack!");
+										isGameFinished = true;
+        }
+    }
+
+						for (int i = 0; i < playerBoard.length; i++) {
+							if (playerBoard[i]!=null && playerBoard[i].getColor().equals("Blue") && sumPlayerBoard == 20) {
+									System.out.println("Player Bluejack!");
+										isGameFinished = true;
+        }
+    }
+}
+            }
+            System.out.println(" Game ended,Computer Score is:" + computerscore + "Player Score is: " +playerscore);
+        }
+    }
+}
